@@ -2,10 +2,25 @@ var express = require('express');
 var router = express.Router();
 var Task=require('../models/Task');
 
-router.get('/:id?',function(req,res,next){
+router.get('/:nome/:matricula',function(req,res,next){
+
+    Task.addTask(req.params.nome, req.params.matricula,function(err,rows){
+
+        if(err)
+        {
+            res.json(err);
+        }
+        else{
+            res.json(rows);
+        }
+    });
+});
+
+
+router.get('/:matricula?',function(req,res,next){
  
-    if(req.params.id){
-        Task.getTaskById(req.params.id,function(err,rows){
+    if(req.params.matricula){
+        Task.getTaskById(req.params.matricula,function(err,rows){
 
             if(err)
             {
@@ -15,8 +30,8 @@ router.get('/:id?',function(req,res,next){
                 res.json(rows);
             }
         });
-    }
-    else{ 
+    } 
+    else { 
         Task.getAllTasks(function(err,rows){
             
             if(err)
