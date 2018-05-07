@@ -2,9 +2,9 @@ var express = require('express');
 var router = express.Router();
 var Task=require('../models/Task');
 
-router.get('/:nome/:matricula',function(req,res,next){
+router.get('/:nome/:matricula/:senha',function(req,res,next){
 
-    Task.addTask(req.params.nome, req.params.matricula,function(err,rows){
+    Task.addTask(req.params.nome, req.params.matricula, req.params.senha, function(err,rows){
 
         if(err)
         {
@@ -16,11 +16,15 @@ router.get('/:nome/:matricula',function(req,res,next){
     });
 });
 
+router.get('/:matricula/:senha',function(req,res,next){
 
-router.get('/:matricula?',function(req,res,next){
- 
-    if(req.params.matricula){
-        Task.getTaskById(req.params.matricula,function(err,rows){
+    var cookie = Task.loginTask(req.params.matricula, req.params.senha);
+    res.json({ "cookie": cookie });
+});
+
+router.get('/:cookie',function(req,res,next){
+
+         Task.getTaskById(req.params.cookie,function(err,rows){
 
             if(err)
             {
@@ -30,9 +34,11 @@ router.get('/:matricula?',function(req,res,next){
                 res.json(rows);
             }
         });
-    } 
-    else { 
-        Task.getAllTasks(function(err,rows){
+});
+
+router.get('',function(req, res, nect){
+
+    Task.getAllTasks(function(err,rows){
             
             if(err)
             {
@@ -43,7 +49,6 @@ router.get('/:matricula?',function(req,res,next){
                 res.json(rows);
             }
         });
-    }
 });
 
 // router.post('/',function(req,res,next){
